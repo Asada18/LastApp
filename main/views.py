@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework import generics
+from rest_framework import generics, viewsets
 from .models import Stories, Post
 
 from .serializers import StorySerializer, PostSerializer, PostImage, PostImageSerializer
@@ -28,6 +28,24 @@ from .serializers import StorySerializer, PostSerializer, PostImage, PostImageSe
 #         return Response(serializer.data)
 
 """Class-Based_View(generic views)"""
+# class PostView(generics.ListCreateAPIView):
+#     queryset = Post.objects.all()
+#     serializer_class = PostSerializer
+#
+#
+# class PostDetailView(generics.RetrieveAPIView):
+#     queryset = Post.objects.all()
+#     serializer_class = PostSerializer
+#
+#
+# class PostUpdateView(generics.UpdateAPIView):
+#     queryset = Post.objects.all()
+#     serializer_class = PostSerializer
+#
+#
+# class PostDeleteView(generics.DestroyAPIView):
+#     queryset = Post.objects.all()
+#     serializer_class = PostSerializer
 
 
 class StoriesListView(generics.ListAPIView):
@@ -35,22 +53,7 @@ class StoriesListView(generics.ListAPIView):
     serializer_class = StorySerializer
 
 
-class PostView(generics.ListCreateAPIView):
-    queryset = Post.objects.all()
-    serializer_class = PostSerializer
-
-
-class PostDetailView(generics.RetrieveAPIView):
-    queryset = Post.objects.all()
-    serializer_class = PostSerializer
-
-
-class PostUpdateView(generics.UpdateAPIView):
-    queryset = Post.objects.all()
-    serializer_class = PostSerializer
-
-
-class PostDeleteView(generics.DestroyAPIView):
+class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
 
