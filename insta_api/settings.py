@@ -40,6 +40,7 @@ INSTALLED_APPS = [
 
     # my apps
     'rest_framework',
+    'rest_framework.authtoken',
     'account',
     'main',
 ]
@@ -136,4 +137,11 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 AUTH_USER_MODEL = 'account.MyUser'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ]
+}
+
 
