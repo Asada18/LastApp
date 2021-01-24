@@ -4,6 +4,8 @@ from .models import *
 
 
 class StorySerializer(serializers.ModelSerializer):
+    created_at = serializers.DateTimeField(format='%d/%m/%Y %H:%M:%S', read_only=True)
+
     class Meta:
         model = Stories
         fields = '__all__'
