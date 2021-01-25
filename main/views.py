@@ -4,14 +4,15 @@ from django.db.models import Q
 from django.shortcuts import render
 from django.utils import timezone
 from rest_framework.decorators import api_view, action
+from rest_framework.exceptions import ValidationError
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import generics, viewsets, status
-from .models import Stories, Post
+from .models import Stories, Post, PostComment, Like
 from .permissions import IsPostAuthor
-from .serializers import StorySerializer, PostSerializer, PostImage, PostImageSerializer
+from .serializers import StorySerializer, PostSerializer, PostImage, PostImageSerializer, PostCommentSerializer, LikeSerializer
 
 """Function-Based-View"""
 # @api_view(['GET'])
@@ -79,7 +80,7 @@ class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
     permission_classes = [IsAuthenticated]
-    pagination_class = MyPaginationClass
+    # pagination_class = MyPaginationClass
 
     def get_permissions(self):
         """переопределение метода"""
@@ -122,20 +123,32 @@ class PostImageView(generics.ListCreateAPIView):
         return {'request': self.request}
 
 
+class PostCommentView(generics.ListCreateAPIView):
+    queryset = PostComment.objects.all()
+    serializer_class = PostCommentSerializer
+
+    def get_serializer_context(self):
+        return {'request': self.request}
 
 
+class LikeCreate(generics.CreateAPIView):
+    serializer_class = LikeSerializer
+    permission_classes = [IsAuthenticated, ]
 
+    def get_queryset(self):
+        user = self.request.user
+        post = Post.objects.get(pk=self.kwargs['pk'])
+        return Like.objects.filter(liker=user, post=post)
 
+    def perform_create(self, serializer):
+        if self.get_queryset().exists():
+            raise ValidationError("ты уже поставил лайк")
+        serializer.save(liker=self.request.user, post=Post.objects.get(pk=self.kwargs['pk']))
 
-
-
-
-
-
-
-
-
-
-
-
+    def delete(self, request, *args, **kwargs):
+        if self.get_queryset().exists():
+            self.get_queryset().delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        else:
+            raise ValidationError("ты не лайкал")
 

@@ -47,6 +47,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'user',
+    # 'comment',
+    # 'account',
     'main',
 ]
 
@@ -87,7 +89,7 @@ WSGI_APPLICATION = 'insta_api.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'insta1',
+        'NAME': 'last',
         'USER': 'asada',
         'PASSWORD': '123',
         'HOST': 'localhost',

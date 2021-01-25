@@ -19,7 +19,8 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
-from main.views import StoriesViewSet, PostViewSet, PostImageView
+from main.models import PostComment
+from main.views import StoriesViewSet, PostViewSet, PostImageView, PostCommentView, LikeCreate
 
 router = DefaultRouter()
 router.register('posts', PostViewSet)
@@ -32,9 +33,9 @@ urlpatterns = [
     path('api-auth/', include('rest_framework.urls')),
     path('v1/api/add-image/', PostImageView.as_view()),
     path('v1/api/account/', include('user.urls')),
-    path('auth/', include('djoser.urls')),
-    path('auth/', include('djoser.urls.authtoken')),
-    path('auth/', include('djoser.urls.jwt')),
+    path('v1/api/add-comment/', PostCommentView.as_view()),
+    path('v1/api/<int:pk>/like/', LikeCreate.as_view()),
+
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 

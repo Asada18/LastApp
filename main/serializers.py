@@ -13,16 +13,19 @@ class StorySerializer(serializers.ModelSerializer):
 
 class PostSerializer(serializers.ModelSerializer):
     created_at = serializers.DateTimeField(format='%d/%m/%Y %H:%M:%S', read_only=True)
+    likes = serializers.SerializerMethodField()
 
     class Meta:
         model = Post
-        fields = ('id', 'title', 'author', 'created_at', 'text')
+        fields = ('id', 'title', 'author', 'created_at', 'text', 'post_comments', 'likes',)
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         representation['author'] = instance.author.email
         representation['images'] = PostImageSerializer(instance.images.all(),
                                                        many=True, context=self.context).data
+        representation['post_comments'] = PostCommentSerializer(instance.post_comments.all(), many=True,
+                                                                context=self.context).data
         return representation
 
     def create(self, validated_data):
@@ -31,6 +34,9 @@ class PostSerializer(serializers.ModelSerializer):
         validated_data['author_id'] = user_id
         post = Post.objects.create(**validated_data)
         return post
+
+    def get_likes(self, post):
+        return Like.objects.filter(post=post).count()
 
 
 class PostImageSerializer(serializers.ModelSerializer):
@@ -54,19 +60,25 @@ class PostImageSerializer(serializers.ModelSerializer):
         return representation
 
 
-class CommentSerializer(serializers.ModelSerializer):
+class PostCommentSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Comment
-        fields = ('id', 'text', 'product')
+        model = PostComment
+        fields = '__all__'
 
-    def create(self, validated_data):
-        request = self.context.get('request')
-        validated_data['author_id'] = request.user
-        comment = Comment.objects.create(**validated_data)
-        return comment
+    # def create(self, validated_data):
+    #     request = self.context.get('request')
+    #     validated_data['author_id'] = request.user
+    #     comment = PostComment.objects.create(**validated_data)
+    #     return comment
+    #
+    # def to_representation(self, instance):
+    #     representation = super().to_representation(instance)
+    #     # representation['author'] = UserSerializer(instance.author_id).data
+    #     return representation
 
-    def to_representation(self, instance):
-        representation = super().to_representation(instance)
-        # representation['author'] = UserSerializer(instance.author_id).data
-        return representation
+
+class LikeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Like
+        fields = ['id']
 
