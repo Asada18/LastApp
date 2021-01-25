@@ -20,9 +20,17 @@ class PostSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
+        representation['author'] = instance.author.email
         representation['images'] = PostImageSerializer(instance.images.all(),
                                                        many=True, context=self.context).data
         return representation
+
+    def create(self, validated_data):
+        request = self.context.get('request')
+        user_id = request.user.id
+        validated_data['author_id'] = user_id
+        post = Post.objects.create(**validated_data)
+        return post
 
 
 class PostImageSerializer(serializers.ModelSerializer):

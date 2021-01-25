@@ -6,7 +6,10 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
+from main.models import Post
 from .serializers import *
+from django.core.mail import send_mail
 
 
 class RegisterView(APIView):
@@ -14,18 +17,24 @@ class RegisterView(APIView):
         data = request.data
         serializer = RegisterSerializer(data=data)
         if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            return Response("Successfully signed up!", status=status.HTTP_201_CREATED)
+            user = serializer.save()
+            if user:
+                user.create_activation_code()
+                send_activation_code(user.email, user.activation_code)
+                return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class ActivateView(APIView):
     def get(self, request, activation_code):
         User = get_user_model()
         user = get_object_or_404(User, activation_code=activation_code)
-        user.is_active = True
-        user.activation_code = ''
-        user.save()
-        return Response("Your account successfully activated!", status=status.HTTP_200_OK)
+        user.activate_with_code(activation_code)
+        # user.is_active = True
+        # user.activation_code = ''
+        # user.save()
+        return Response(data={'message': 'Аккаунт успешно активирован'}, status=status.HTTP_200_OK)
+
+        # return Response("Your account successfully activated!", status=status.HTTP_200_OK)
 
 
 class LoginView(ObtainAuthToken):

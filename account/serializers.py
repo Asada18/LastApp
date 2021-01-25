@@ -28,8 +28,6 @@ class RegisterSerializer(serializers.ModelSerializer):
         send_activation_code(email=user.email, activation_code=user.activation_code)
         return user
 
-# TODO: login serializer
-
 
 class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
