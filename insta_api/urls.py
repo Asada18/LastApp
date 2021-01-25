@@ -31,7 +31,10 @@ urlpatterns = [
     path('v1/api/', include(router.urls)),
     path('api-auth/', include('rest_framework.urls')),
     path('v1/api/add-image/', PostImageView.as_view()),
-    path('v1/api/account/', include('account.urls')),
+    path('v1/api/account/', include('user.urls')),
+    path('auth/', include('djoser.urls')),
+    path('auth/', include('djoser.urls.authtoken')),
+    path('auth/', include('djoser.urls.jwt')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 
