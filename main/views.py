@@ -92,7 +92,7 @@ class PostViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        weeks_count = int(self.request.query_params.get('weeks', 0))
+        weeks_count = int(self.request.query_params.get('hour', 0))
         if weeks_count > 0:
             start_date = timezone.now() - timedelta(weeks=weeks_count)
             queryset = queryset.filter(created_at__gte=start_date)
