@@ -27,7 +27,7 @@ class PostImage(models.Model):
 
 class PostComment(models.Model):
     author = models.ForeignKey(CustomUser, on_delete=models.CASCADE,)
-    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='post_comments')
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='post_comments', blank=True)
     text = models.CharField(max_length=1000)
 
     def __str__(self):
