@@ -64,6 +64,7 @@ class PostCommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = PostComment
         fields = '__all__'
+        # fields = ['id', 'text', 'post']
 
     # def create(self, validated_data):
     #     request = self.context.get('request')

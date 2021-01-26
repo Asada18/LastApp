@@ -31,6 +31,7 @@ class RegistrationAPIView(APIView):
                 send_activation_mail(user.email, user.activation_code)
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+
 class ActivationView(APIView):
 
     def get(self, request, activation_code):

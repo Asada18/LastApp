@@ -70,7 +70,6 @@ class LogoutView(APIView):
 
 
 
-# TODO: logout view
 
 
 

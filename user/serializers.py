@@ -25,7 +25,6 @@ class RegistrationAPISerializer(serializers.ModelSerializer):
         return user
 
 
-
 class LoginSerializer(TokenObtainPairSerializer):
     email = serializers.EmailField()
     password = serializers.CharField(write_only=True)
